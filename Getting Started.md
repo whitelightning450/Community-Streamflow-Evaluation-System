@@ -1,10 +1,23 @@
-# Getting Started: Virtual Environment
+
+
+
+
+
+# Getting Started: 
+The first step is to identify a folder location where you would like to use ROSET-AWS.
+We suggest a location that will be able to easily access streamflow predictions to make for easy evaluation of your model.
+Using the command prompt, change your working directory to this folder and git clone [ROSET-AWS](https://github.com/whitelightning450/ROSET-AWS)
+
+    git clone https://github.com/whitelightning450/ROSET-AWS 
+
+
+## Virtual Environment
 It is a best practice to create a virtual environment when starting a new project, as a virtual environment essentially creates an isolated working copy of Python for a particular project. 
 I.e., each environment can have its own dependencies or even its own Python versions.
 Creating a Python virtual environment is useful if you need different versions of Python or packages for different projects.
 Lastly, a virtual environment keeps things tidy, makes sure your main Python installation stays healthy and supports reproducible and open science.
 
-## Creating your Python-GEE Virtual Environment
+### Creating your ROSET-AWS Python Virtual Environment
 Since we will be using Jupyter Notebooks for this exercise, we will use the Anaconda command prompt to create our virtual environment. 
 In the command line type: 
 
@@ -32,7 +45,7 @@ The ROSET-AWS should show up on the top right of the Jupyter Notebook.
 
 
 
-## Loading other Python dependencies
+### Loading other Python dependencies
 We will now be installing the packages needed to use ROSET-AWS, as well as other tools to accomplish data science tasks.
 Enter the following code block in your Anaconda Command Prompt to get the required dependencies with the appropriate versions, note, you must be in the correct working directory:
 
