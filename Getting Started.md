@@ -6,9 +6,9 @@
 # Getting Started: 
 The first step is to identify a folder location where you would like to use the Python Research-Oriented Streamflow Evaluation Tool (ROSET-AWS).
 We suggest a location that will be able to easily access streamflow predictions to make for easy evaluation of your model.
-Using the command prompt, change your working directory to this folder and git clone [ROSET-AWS](https://github.com/whitelightning450/ROSET-AWS)
+Using the command prompt, change your working directory to this folder and git clone [ROSET-AWS](https://github.com/whitelightning450/Community-Streamflow-Evaluation-System)
 
-    git clone https://github.com/whitelightning450/ROSET-AWS 
+    git clone https://github.com/whitelightning450/Community-Streamflow-Evaluation-System
 
 
 ## Virtual Environment
