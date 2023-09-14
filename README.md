@@ -13,7 +13,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/whitelightning450/ROSET-AWS?style=plastic)
 ![GitHub milestones](https://img.shields.io/github/milestones/closed/whitelightning450/ROSET-AWS?style=plastic)
 ![GitHub milestones](https://img.shields.io/github/milestones/open/whitelightning450/ROSET-AWS?style=plastic)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/whitelightning450/ROSET-AWS?style=plastic)
+![GitHub milestones](https://img.shields.io/github/milestones/open/whitelightning450/ROSET-AWS?style=plastic)
 
 A Novel Research-Oriented Streamflow Evaluation Tool (ROSET) to evaluation hydrological model performance using a standardized NHDPlus data model.
 ROSET evaluates modeled streamflow to a repositor of over 5,000 in situ USGS monitoring sites, with interactive visualizations supporting an in-depth analysis.
