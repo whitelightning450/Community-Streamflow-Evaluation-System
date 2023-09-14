@@ -38,7 +38,7 @@ With the package installed, we can connect the ROSET-AWS to our Python Notebook
 
     python -m ipykernel install --user --name=ROSET-AWS
 
-Open up the [ROSET-AWS.ipynb](./ROSET-AWS/ROSET_AWS.ipynb.ipynb) file, click the kernel tab on the top toolbar, and select the ROSET-AWS. 
+Open up the [ROSET-AWS.ipynb](./ROSET-AWS/ROSET_AWS.ipynb) file, click the kernel tab on the top toolbar, and select the ROSET-AWS. 
 The ROSET-AWS should show up on the top right of the Jupyter Notebook.
 
 ![Notebook_env](./Images/ROSET-Kernel.JPG)
