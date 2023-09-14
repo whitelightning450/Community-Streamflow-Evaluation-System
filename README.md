@@ -12,7 +12,7 @@
 ![GitHub branch checks state](https://img.shields.io/github/checks-status/whitelightning450/Machine-Learning-Water-Systems-Model/main?style=plastic)
 ![GitHub issues](https://img.shields.io/github/issues/whitelightning450/ROSET-AWS?style=plastic)
 ![GitHub milestones](https://img.shields.io/github/milestones/closed/whitelightning450/ROSET-AWS?style=plastic)
-![GitHub milestones](https://img.shields.io/github/milestones/open/whitelightning450/StreamflowROSET-AWS_Evaluator?style=plastic)
+![GitHub milestones](https://img.shields.io/github/milestones/open/whitelightning450/ROSET-AWS_Evaluator?style=plastic)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/whitelightning450/ROSET-AWS?style=plastic)
 
 A Novel Research-Oriented Streamflow Evaluation Tool (ROSET) to evaluation hydrological model performance using a standardized NHDPlus data model.
