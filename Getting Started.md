@@ -8,25 +8,25 @@ Lastly, a virtual environment keeps things tidy, makes sure your main Python ins
 Since we will be using Jupyter Notebooks for this exercise, we will use the Anaconda command prompt to create our virtual environment. 
 In the command line type: 
 
-    conda create -n GEE_env python=3.9.12
+    conda create -n ROSET-AWS python=3.9.12
 
 For this example, we will be using Python version 3.9.12, specify this version when setting up your new virtual environment.
-After Anaconda finishes setting up your GEE_env, activate it using the activate function.
+After Anaconda finishes setting up your ROSET-AWS, activate it using the activate function.
 
-    conda activate GEE_env
+    conda activate ROSET-AWS
 
-You should now be working in your new GEE_env within the command prompt. 
+You should now be working in your new ROSET-AWS within the command prompt. 
 However, we will want to work in this environment within our Jupyter Notebook and need to create a kernel to connect them.
 We begin by installing the **ipykernel** python package:
 
     pip install --user ipykernel
 
-With the package installed, we can connect the GEE_env to our Python Notebook
+With the package installed, we can connect the ROSET-AWS to our Python Notebook
 
-    python -m ipykernel install --user --name=GEE_env
+    python -m ipykernel install --user --name=ROSET-AWS
 
-Open up the [ROSET-AWS.ipynb](./ROSET-AWS/ROSET_AWS.ipynb.ipynb) file, click the kernel tab on the top toolbar, and select the GEE_env. 
-The GEE_env should show up on the top right of the Jupyter Notebook.
+Open up the [ROSET-AWS.ipynb](./ROSET-AWS/ROSET_AWS.ipynb.ipynb) file, click the kernel tab on the top toolbar, and select the ROSET-AWS. 
+The ROSET-AWS should show up on the top right of the Jupyter Notebook.
 
 ![GEE_Notebook_GEE_env](./Images/GEE_Jupyter_Kernel2.JPG)
 
