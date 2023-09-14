@@ -39,7 +39,7 @@ Python: Version 3.9.12.
 ### Required packages
 The included requirements.txt file should set up the correct ROSET-AWS environment.
 To use ROSET-AWS, create a virtual python environment and run the requirement.txt file to ensure all package versions are correct.
-To get started, click [Here](./Getting%20Started.mdGetting Started.md)
+To get started, click [Here](./Getting Started.md)
 
 ## Streamflow Evaluation Options
 Each streamflow evaluation method requires similar inputs, including a start date, end date, and model.
