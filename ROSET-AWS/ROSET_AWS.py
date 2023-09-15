@@ -62,6 +62,8 @@ import swifter
 from geopy.geocoders import Nominatim
 from multiprocessing import Process
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 
@@ -97,7 +99,7 @@ class LULC_Eval():
         
         #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3')
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
         self.bucket = s3.Bucket(bucket_name)
 
        #Load streamstats wiht lat long to get geolocational information
@@ -1220,7 +1222,7 @@ class HUC_Eval():
                         }
          #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3')
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
         self.bucket = s3.Bucket(bucket_name)
 
 
@@ -1930,7 +1932,7 @@ class Reach_Eval():
                         }
        #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3')
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
         self.bucket = s3.Bucket(bucket_name)
 
 
