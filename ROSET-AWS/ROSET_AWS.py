@@ -1268,9 +1268,15 @@ class HUC_Eval():
                 bucket_name = 'streamflow-app-data'
                 # Get HUC unit from the .gdb file 
                 #load the HUC geopandas df
-         
-                filepath = f"s3://{bucket_name}/WBD/WBD_{HU}_HU2_GDB/WBD_{HU}_HU2_GDB.gdb/"
-                HUC_G = gpd.read_file(filepath, layer=HUCunit)
+                
+                try:         
+                    filepath = f"s3://{bucket_name}/WBD/WBD_{HU}_HU2_GDB/WBD_{HU}_HU2_GDB.gdb/"
+                    HUC_G = gpd.read_file(filepath, layer=HUCunit)
+                except:
+                    print('No AWS access, trying local directory')
+                    filepath = f"WBD/WBD_{HU}_HU2_GDB.gdb/"
+                    HUC_G = gpd.read_file(filepath, layer=HUCunit)
+                    print('Found data in local directory')
 
                 #select HUC
                 HUC_G = HUC_G[HUC_G[self.HUC_length] == h] 
