@@ -18,7 +18,7 @@ from hydrotools.nwis_client.iv import IVDataService
 from hydrotools.nwm_client import utils
 import pandas as pd
 import numpy as np
-import data
+#import data
 import matplotlib.pyplot as plt
 import mpl_toolkits
 from mpl_toolkits.mplot3d import Axes3D
@@ -38,7 +38,7 @@ from progressbar import ProgressBar
 from datetime import timedelta
 import folium
 import matplotlib
-import mapclassify
+#import mapclassify
 import time
 import jenkspy
 import hvplot.pandas
@@ -52,9 +52,9 @@ import json
 from folium import features
 import proplot as pplt
 pplt.rc["figure.facecolor"] = "w"
-import pygeohydro as gh
-import pygeoutils as geoutils
-from pygeohydro import NID, NWIS
+#import pygeohydro as gh
+#import pygeoutils as geoutils
+#from pygeohydro import NID, NWIS
 import pandas as pd
 from folium.plugins import StripePattern
 import io
@@ -64,6 +64,7 @@ from multiprocessing import Process
 import boto3
 from botocore import UNSIGNED
 from botocore.client import Config
+import os
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 
@@ -93,16 +94,25 @@ class LULC_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
+        #load access key
+        home = os.path.expanduser('~')
+        keypath = "apps/AWSaccessKeys.csv"
+        access = pd.read_csv(f"{home}/{keypath}")
+
+        #start session
+        session = boto3.Session(
+            aws_access_key_id=access['Access key ID'][0],
+            aws_secret_access_key=access['Secret access key'][0],
+        )
+        self.s3 = session.resource('s3')
+         #AWS bucket information
+        bucket_name = 'streamflow-app-data'
+        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = self.s3.Bucket(bucket_name)
         
     def get_NWIS(self):
         print('Getting NWIS Streamstats')
-        
-        #AWS bucket information
-        bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = s3.Bucket(bucket_name)
-
-       #Load streamstats wiht lat long to get geolocational information
+        #Load streamstats wiht lat long to get geolocational information
         csv_key = 'Streamstats/Streamstats.csv'
         obj = self.bucket.Object(csv_key)
         body = obj.get()['Body']
@@ -542,6 +552,7 @@ class LULC_Eval():
         self.Mod_data = pd.DataFrame(columns = self.comparison_reaches)
         
         print('Getting ', self.model, ' data')
+        
         pbar = ProgressBar()
         for site in pbar(self.comparison_reaches):
 
@@ -1108,8 +1119,9 @@ class LULC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-                       control_scale=True)
+        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+        #               control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
         #add legend to map
         colormap = cm.StepColormap(colors = ['darkred', 'r', 'orange', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
@@ -1220,10 +1232,21 @@ class HUC_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
+        #load access key
+        home = os.path.expanduser('~')
+        keypath = "apps/AWSaccessKeys.csv"
+        access = pd.read_csv(f"{home}/{keypath}")
+
+        #start session
+        session = boto3.Session(
+            aws_access_key_id=access['Access key ID'][0],
+            aws_secret_access_key=access['Secret access key'][0],
+        )
+        self.s3 = session.resource('s3')
          #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = s3.Bucket(bucket_name)
+        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = self.s3.Bucket(bucket_name)
 
 
     def date_range_list(self):
@@ -1822,8 +1845,9 @@ class HUC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-                       control_scale=True)
+        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+         #              control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
         #add legend to map
         colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
@@ -1936,10 +1960,21 @@ class Reach_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
-       #AWS bucket information
+       #load access key
+        home = os.path.expanduser('~')
+        keypath = "apps/AWSaccessKeys.csv"
+        access = pd.read_csv(f"{home}/{keypath}")
+
+        #start session
+        session = boto3.Session(
+            aws_access_key_id=access['Access key ID'][0],
+            aws_secret_access_key=access['Secret access key'][0],
+        )
+        self.s3 = session.resource('s3')
+         #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = s3.Bucket(bucket_name)
+        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = self.s3.Bucket(bucket_name)
 
 
     def date_range_list(self):
@@ -2500,8 +2535,9 @@ class Reach_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-                       control_scale=True)
+        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+                       #control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
         #add legend to map
         colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
