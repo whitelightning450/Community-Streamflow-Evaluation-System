@@ -49,6 +49,7 @@ import branca.colormap as cm
 import vincent
 from vincent import AxisProperties, PropertySet, ValueRef, Axis
 import json
+import matplotlib.cm
 from folium import features
 import proplot as pplt
 pplt.rc["figure.facecolor"] = "w"
@@ -64,6 +65,7 @@ from multiprocessing import Process
 import boto3
 from botocore import UNSIGNED
 from botocore.client import Config
+
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 
@@ -546,9 +548,10 @@ class LULC_Eval():
         for site in pbar(self.comparison_reaches):
 
             try:
-
+                print(f"Getting data for {self.model}: ", site)
+                state = Mod_state_key[site]
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{self.state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -603,12 +606,12 @@ class LULC_Eval():
         self.NWIS_data.fillna(-100, inplace = True)
         self.NWIS_column = self.NWIS_data.copy()
         self.NWIS_column = pd.DataFrame(self.NWIS_column.stack(), columns = ['NWIS_flow_cfs'])
-        self.NWIS_column = self.NWIS_column.reset_index().drop('level_1',1)
+        self.NWIS_column = self.NWIS_column.reset_index().drop('level_1', axis = 1)
 
         self.Mod_column = self.Mod_data.copy()
         col = self.model+'_flow_cfs'
         self.Mod_column = pd.DataFrame(self.Mod_column.stack(), columns = [col])
-        self.Mod_column = self.Mod_column.reset_index().drop('level_1',1)
+        self.Mod_column = self.Mod_column.reset_index().drop('level_1', axis =  1)
 
         
             
@@ -1108,10 +1111,10 @@ class LULC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
                        control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['darkred', 'r', 'orange', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['red', 'orange', 'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -1159,22 +1162,25 @@ class LULC_Eval():
                 #calculate scoring
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
-                #set the color of marker by model performance
+                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'orange'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
-                    color = 'red'
+                    color = 'orange'
 
                 else:
-                    color = 'darkredred'
+                    color = 'red'
 
 
                 title_size = 14
-
+                
+                self.dff = df
                 #create graph and convert to json
                 graph = vincent.Line(df, height=300, width=500)
                 graph.axis_titles(x='Datetime', y=yaxis)
@@ -1268,9 +1274,15 @@ class HUC_Eval():
                 bucket_name = 'streamflow-app-data'
                 # Get HUC unit from the .gdb file 
                 #load the HUC geopandas df
-         
-                filepath = f"s3://{bucket_name}/WBD/WBD_{HU}_HU2_GDB/WBD_{HU}_HU2_GDB.gdb/"
-                HUC_G = gpd.read_file(filepath, layer=HUCunit)
+
+                try:         
+                    filepath = f"s3://{bucket_name}/WBD/WBD_{HU}_HU2_GDB/WBD_{HU}_HU2_GDB.gdb/"
+                    HUC_G = gpd.read_file(filepath, layer=HUCunit)
+                except:
+                    print('No AWS access, trying local directory')
+                    filepath = f"WBD/WBD_{HU}_HU2_GDB.gdb/"
+                    HUC_G = gpd.read_file(filepath, layer=HUCunit)
+                    print('Found data in local directory')
 
                 #select HUC
                 HUC_G = HUC_G[HUC_G[self.HUC_length] == h] 
@@ -1366,7 +1378,7 @@ class HUC_Eval():
             try:
 
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -1816,10 +1828,10 @@ class HUC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
                        control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['r', 'orange',  'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -1866,13 +1878,14 @@ class HUC_Eval():
                 #calculate scoring
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
-                #set the color of marker by model performance
+                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'yellow'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
                     color = 'orange'
@@ -2023,10 +2036,10 @@ class Reach_Eval():
         for site in pbar(self.comparison_reaches):
 
             try:
-                print('Getting data for NWM: ', site)
+                print(f"Getting data for {self.model}: ", site)
                 state = Mod_state_key[site]
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -2494,10 +2507,10 @@ class Reach_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
                        control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['r', 'orange',  'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -2544,12 +2557,13 @@ class Reach_Eval():
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'yellow'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
                     color = 'orange'
