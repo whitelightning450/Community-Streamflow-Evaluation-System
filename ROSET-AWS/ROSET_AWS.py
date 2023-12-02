@@ -1150,8 +1150,8 @@ class LULC_Eval():
             
             if len(df_narem)>=1:
             
-                df_narem['error'] = df_narem['obs'] - df_narem['mod']
-                df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
+               # df_narem['error'] = df_narem['obs'] - df_narem['mod']
+               # df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
                 #drop inf values
                 df_narem.replace([np.inf, -np.inf], np.nan, inplace = True)
                 df_narem.dropna(inplace = True)
@@ -1866,8 +1866,8 @@ class HUC_Eval():
             
             if len(df_narem) >=1:
             
-                df_narem['error'] = df_narem['obs'] - df_narem['mod']
-                df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
+                #df_narem['error'] = df_narem['obs'] - df_narem['mod']
+                #df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
                 #drop inf values
                 df_narem.replace([np.inf, -np.inf], np.nan, inplace = True)
                 df_narem.dropna(inplace = True)
@@ -2541,12 +2541,13 @@ class Reach_Eval():
             df_narem = pd.DataFrame()
             df_narem['obs'] = self.NWIS_data_resampled[site].astype('float64')
             df_narem['mod'] = self.Mod_data_resampled[reach].astype('float64')
-            df_narem['error'] = df_narem['obs'] - df_narem['mod']
-            df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
+            #df_narem['error'] = abs(df_narem['obs'] - df_narem['mod'])
+            #df_narem['P_error'] = abs(df_narem['error']/df_narem['obs'])*100
             #drop inf values
             df_narem.replace([np.inf, -np.inf], -100, inplace = True)
             df_narem = df_narem[df_narem >=0]
             df_narem.dropna(inplace = True)
+        
             
             if len(df_narem)>=1:
 
