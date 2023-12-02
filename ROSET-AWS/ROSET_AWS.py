@@ -18,7 +18,7 @@ from hydrotools.nwis_client.iv import IVDataService
 from hydrotools.nwm_client import utils
 import pandas as pd
 import numpy as np
-#import data
+import data
 import matplotlib.pyplot as plt
 import mpl_toolkits
 from mpl_toolkits.mplot3d import Axes3D
@@ -38,7 +38,7 @@ from progressbar import ProgressBar
 from datetime import timedelta
 import folium
 import matplotlib
-#import mapclassify
+import mapclassify
 import time
 import jenkspy
 import hvplot.pandas
@@ -49,12 +49,13 @@ import branca.colormap as cm
 import vincent
 from vincent import AxisProperties, PropertySet, ValueRef, Axis
 import json
+import matplotlib.cm
 from folium import features
 import proplot as pplt
 pplt.rc["figure.facecolor"] = "w"
-#import pygeohydro as gh
-#import pygeoutils as geoutils
-#from pygeohydro import NID, NWIS
+import pygeohydro as gh
+import pygeoutils as geoutils
+from pygeohydro import NID, NWIS
 import pandas as pd
 from folium.plugins import StripePattern
 import io
@@ -64,7 +65,7 @@ from multiprocessing import Process
 import boto3
 from botocore import UNSIGNED
 from botocore.client import Config
-import os
+
 
 geolocator = Nominatim(user_agent="geoapiExercises")
 
@@ -94,25 +95,16 @@ class LULC_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
-        #load access key
-        home = os.path.expanduser('~')
-        keypath = "apps/AWSaccessKeys.csv"
-        access = pd.read_csv(f"{home}/{keypath}")
-
-        #start session
-        session = boto3.Session(
-            aws_access_key_id=access['Access key ID'][0],
-            aws_secret_access_key=access['Secret access key'][0],
-        )
-        self.s3 = session.resource('s3')
-         #AWS bucket information
-        bucket_name = 'streamflow-app-data'
-        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = self.s3.Bucket(bucket_name)
         
     def get_NWIS(self):
         print('Getting NWIS Streamstats')
-        #Load streamstats wiht lat long to get geolocational information
+        
+        #AWS bucket information
+        bucket_name = 'streamflow-app-data'
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = s3.Bucket(bucket_name)
+
+       #Load streamstats wiht lat long to get geolocational information
         csv_key = 'Streamstats/Streamstats.csv'
         obj = self.bucket.Object(csv_key)
         body = obj.get()['Body']
@@ -552,14 +544,14 @@ class LULC_Eval():
         self.Mod_data = pd.DataFrame(columns = self.comparison_reaches)
         
         print('Getting ', self.model, ' data')
-        
         pbar = ProgressBar()
         for site in pbar(self.comparison_reaches):
 
             try:
-
+                print(f"Getting data for {self.model}: ", site)
+                state = Mod_state_key[site]
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{self.state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -614,12 +606,12 @@ class LULC_Eval():
         self.NWIS_data.fillna(-100, inplace = True)
         self.NWIS_column = self.NWIS_data.copy()
         self.NWIS_column = pd.DataFrame(self.NWIS_column.stack(), columns = ['NWIS_flow_cfs'])
-        self.NWIS_column = self.NWIS_column.reset_index().drop('level_1',1)
+        self.NWIS_column = self.NWIS_column.reset_index().drop('level_1', axis = 1)
 
         self.Mod_column = self.Mod_data.copy()
         col = self.model+'_flow_cfs'
         self.Mod_column = pd.DataFrame(self.Mod_column.stack(), columns = [col])
-        self.Mod_column = self.Mod_column.reset_index().drop('level_1',1)
+        self.Mod_column = self.Mod_column.reset_index().drop('level_1', axis =  1)
 
         
             
@@ -1119,11 +1111,10 @@ class LULC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-        #               control_scale=True)
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
+                       control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['darkred', 'r', 'orange', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['red', 'orange', 'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -1171,22 +1162,25 @@ class LULC_Eval():
                 #calculate scoring
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
-                #set the color of marker by model performance
+                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
+
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'orange'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
-                    color = 'red'
+                    color = 'orange'
 
                 else:
-                    color = 'darkredred'
+                    color = 'red'
 
 
                 title_size = 14
-
+                
+                self.dff = df
                 #create graph and convert to json
                 graph = vincent.Line(df, height=300, width=500)
                 graph.axis_titles(x='Datetime', y=yaxis)
@@ -1232,21 +1226,10 @@ class HUC_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
-        #load access key
-        home = os.path.expanduser('~')
-        keypath = "apps/AWSaccessKeys.csv"
-        access = pd.read_csv(f"{home}/{keypath}")
-
-        #start session
-        session = boto3.Session(
-            aws_access_key_id=access['Access key ID'][0],
-            aws_secret_access_key=access['Secret access key'][0],
-        )
-        self.s3 = session.resource('s3')
          #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = self.s3.Bucket(bucket_name)
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = s3.Bucket(bucket_name)
 
 
     def date_range_list(self):
@@ -1291,7 +1274,7 @@ class HUC_Eval():
                 bucket_name = 'streamflow-app-data'
                 # Get HUC unit from the .gdb file 
                 #load the HUC geopandas df
-                
+
                 try:         
                     filepath = f"s3://{bucket_name}/WBD/WBD_{HU}_HU2_GDB/WBD_{HU}_HU2_GDB.gdb/"
                     HUC_G = gpd.read_file(filepath, layer=HUCunit)
@@ -1395,7 +1378,7 @@ class HUC_Eval():
             try:
 
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -1845,11 +1828,10 @@ class HUC_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-         #              control_scale=True)
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
+                       control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['r', 'orange',  'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -1896,13 +1878,14 @@ class HUC_Eval():
                 #calculate scoring
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
-                #set the color of marker by model performance
+                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'yellow'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
                     color = 'orange'
@@ -1960,21 +1943,10 @@ class Reach_Eval():
                         'Q': 'Quarterly',
                         'A': 'Annual'
                         }
-       #load access key
-        home = os.path.expanduser('~')
-        keypath = "apps/AWSaccessKeys.csv"
-        access = pd.read_csv(f"{home}/{keypath}")
-
-        #start session
-        session = boto3.Session(
-            aws_access_key_id=access['Access key ID'][0],
-            aws_secret_access_key=access['Secret access key'][0],
-        )
-        self.s3 = session.resource('s3')
-         #AWS bucket information
+       #AWS bucket information
         bucket_name = 'streamflow-app-data'
-        #s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
-        self.bucket = self.s3.Bucket(bucket_name)
+        s3 = boto3.resource('s3', config=Config(signature_version=UNSIGNED))
+        self.bucket = s3.Bucket(bucket_name)
 
 
     def date_range_list(self):
@@ -2064,10 +2036,10 @@ class Reach_Eval():
         for site in pbar(self.comparison_reaches):
 
             try:
-                print('Getting data for NWM: ', site)
+                print(f"Getting data for {self.model}: ", site)
                 state = Mod_state_key[site]
                 format = '%Y-%m-%d %H:%M:%S'
-                csv_key = f"{self.model}/NHD_segments_{state}.h5/NWM_{site}.csv"
+                csv_key = f"{self.model}/NHD_segments_{state}.h5/{self.model}_{site}.csv"
                 obj = self.bucket.Object(csv_key)
                 body = obj.get()['Body']
                 Mod_flow = pd.read_csv(body)
@@ -2535,11 +2507,10 @@ class Reach_Eval():
         centeroid = self.df_map.dissolve().centroid
 
         # Create a Map instance
-        #m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Stamen Terrain', zoom_start=8, 
-                       #control_scale=True)
-        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]],tiles = 'Open street map ', zoom_start=8, control_scale=True)
+        m = folium.Map(location=[centeroid.y[0], centeroid.x[0]], tiles = 'Open street map ', zoom_start=8, 
+                       control_scale=True)
         #add legend to map
-        colormap = cm.StepColormap(colors = ['r', 'orange',  'y', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
+        colormap = cm.StepColormap(colors = ['r', 'orange',  'lightgreen', 'g'], vmin = -1, vmax = 1, index = [-1,-0.4,0,0.3,1])
         colormap.caption = 'Model Performance (KGE)'
         m.add_child(colormap)
 
@@ -2586,12 +2557,13 @@ class Reach_Eval():
                 kge, r, alpha, beta = he.evaluator(he.kge, mod.astype('float32'), obs.astype('float32'))
 
                 #set the color of marker by model performance
+                #Marker color options ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen', 'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
                 if kge[0] > 0.30:
                     color = 'green'
 
                 elif kge[0] > 0.0:
-                    color = 'yellow'
+                    color = 'lightgreen'
 
                 elif kge[0] > -0.40:
                     color = 'orange'
