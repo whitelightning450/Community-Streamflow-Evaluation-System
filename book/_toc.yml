@@ -14,55 +14,28 @@ parts:
 
 - caption: Chapter One
   chapters:
-    - file: chapters/motivation
+    - file: chapters/one
 
 - caption: Chapter Two
   chapters:
-    - file: chapters/methods
+    - file: chapters/two
 
 - caption: Chapter Three
   chapters:
-    - file: chapters/data
+    - file: chapters/three
 
 - caption: Chapter Four
   chapters:
-    - file: chapters/development
+    - file: chapters/four
 
 - caption: Chapter Five
   chapters:
-    - file: chapters/training
+    - file: chapters/five
 
 - caption: Chapter Six
   chapters:
-    - file: chapters/evaluation
+    - file: chapters/six
 
-- caption: Chapter Seven
-  chapters:
-    - file: chapters/workflow
-
-- caption: Chapter Eight
-  chapters:
-    - file: chapters/reproducibility
-
-- caption: Chapter Nine
-  chapters:
-    - file: chapters/conclusion
-
-- caption: Chapter Ten (optional)
-  chapters:
-    - file: chapters/todo
-
-- caption: Chapter Eleven (optional)
-  chapters:
-    - file: chapters/questions
-
-- caption: Chapter Twelve (optional)
-  chapters:
-    - file: chapters/troubleshooting
-
-- caption: Chapter Thirteen
-  chapters:
-    - file: chapters/example
 
 - caption: Reference
   chapters:
