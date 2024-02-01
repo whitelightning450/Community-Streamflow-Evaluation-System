@@ -103,3 +103,6 @@ Please reach out the AWI team so we can put your model results in our AWS S3 dat
 
 ### Want to contribute?
 Reach out to the AWI team and we can identify meaningful areas to grow Community Streamflow Evaluation System (CSES). Community is in the name for a reason and we intend to integrate more hydrological modeling components into the tool kit as funding allows. Specific areas of contribution include snow, atmospheric forcings, and other model outputs. Let's advance the community modeling paradigm together!
+
+## Funding Acknowledgement
+Funding to support this research was awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003). This work is based on CIROH's Community Streamflow Evaluation System (CSES) provided by the ESIP Lab with support from the National Aeronautics and Space Administration (NASA), National Oceanic and Atmospheric Administration (NOAA) and the United States Geologic Survey (USGS).
