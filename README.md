@@ -17,29 +17,11 @@
 
 A Novel Community Streamflow Evaluation System (CSES) to evaluate hydrological model performance using a standardized NHDPlus data model.
 CSES evaluates modeled streamflow to a repository of over 5,000 in situ USGS monitoring sites, with interactive visualizations supporting an in-depth analysis.
-
+![SupportLogo](./Images/SupportLogo.JPG)
 ## Application Overview
-National-scale streamflow modeling remains a modern challenge, as changes in the underlying hydrology from land use and land cover (LULC) change, anthropogentic streamflow modification, and general process components (reach length, hydrogeophysical processes, precipitation, temperature, etc) greatly influence  hydrological modeling.
-In a changing climate, there is a need to anticipate flood intensity, impacts of groundwater depletion on streamflow, western mountain low-flow events, eastern rain-on-snow events, storm-induced flooding, and other severe environmental problems that challenge the management of water resources.
-Given the National Water Model (NWM) bridges the gap between the spatially coarse USGS streamflow observations by providing a near-continuous 2.7 million reach predictions of streamflow using the standardized NHDPlus framework, there lies the potential to improve upon the capabilities of the model by characterizing predictive performance across the heterogeneity of processes and land covers present at the national scale. 
-The python-based Community-Streamflow-Evaluation-System package provides a foundation to evaluate national hydrography dataset (nhd) based model outputs with colocated USGS/NWIS streamflow monitoring stations (parameter: 060) without the need to download in-situ or NWM v2.1 data (NWM v3.0 coming soon!). 
-The package contains three key methods for evaluation: state-based LULC, HUC level analysis, and USGS station-based analysis.
-Below is a description of each method and application.
+Given the launch of the Cooperative Institute for Research to Operations in Hydrology (CIROH) in April, 2020, CIROH scientists from 28 different academic, government, and private are working to improve the understanding of hydrologic processes, operational hydrologic forecasting techniques and workflows, community water modeling, translation of forecasts to actionable products, and use of water predictions in decision making. National-scale streamflow modeling remains a modern challenge, as changes in the underlying hydrology from land use and land cover (LULC) change, anthropogentic streamflow modification, and general process components (reach length, hydrogeophysical processes, precipitation, temperature, etc) greatly influence hydrological modeling. To benchmark model performance, characterize improvements in hydrological modeling formuations, and generate reproducible science, the team at the Alabama Water Institute (AWI) developed CSES to originally characterize the water supply forecasting skill of the National Water Model v2.1 (NWM v3.o coming soon!) in the Great Salt Lake Basin. The tool quickly scaled and with the support of the Earth Science Information Partners (ESIP), provided an opportunity to turn the tool into a novel evaluation platform for CONUS-wide applications. The package contains three key methods for evaluation: state-based LULC, HUC level analysis, and USGS station-based analysis. Below is a description of each method and application.
 Designed to assess NWM version 2.1 retrospective performance, by using the exemplified data model the tool can evaluate other model predictions, with the motivation to improve regionally dominant hydrological modeling skill.
 By using Community-Streamflow-Evaluation-System, researchers can identify locations where a model may benefit from further training/calibration/parameterization or a need for new model processes/features (e.g., integration of reservoir release operations) to ultimately create new post-processing methods and/or hydrological modeling formulations to improve streamflow prediction capabilities with respect to modeling needs (e.g., stormflow, supply, emergency management, flooding, etc).   
-
-### Data Access
-Community-Streamflow-Evaluation-System leverages USGS/NWIS observations from 1980-2020 and colocated and while all data is publically available through the respective agencies, we found the download time to be preventative for a timely model evaluation. 
-The Alabama Water Institute at the University of Alabama hosts NWM v2.1 retrospective for all colocated USGS monitoring stations at a daily temporal resolution and provides the data free of charge via access to Amazon AWS S3 cloud storage.
-Community-Streamflow-Evaluation-System can quickly access observed and predicted data supporting a fast and repeatable tool for evaluating modeled streamflow performance.
-
-## Dependencies (versions, environments)
-Python: Version 3.9.12. 
-
-### Required packages
-The included requirements.txt file should set up the correct Community-Streamflow-Evaluation-System environment.
-To use Community-Streamflow-Evaluation-System, create a virtual Python environment and run the requirement.txt file to ensure all package versions are correct.
-To get started, click the [Here](./Getting%20Started.md)
 
 ## Streamflow Evaluation Options
 Each streamflow evaluation method requires similar inputs, including a start date, end date, and model.
@@ -51,7 +33,7 @@ There are currently three different evaluation classes, each providing the user 
 For all examples, the predictions are from the NWM v2.1 retrospective. 
 Please see the Examples folder for more information on applying each specific class.
 
-### Modeled Streamflow Evaluation by StreamStats
+### State Evaluation Methods
 To determine how LULC affects the predictive performance of streamflow models, Community-Streamflow-Evaluation-System uses StreamStats to categorize the watershed upstream of each USGS monitoring site by watershed characteristics.
 Please see the State Land Use - Land Cover Evaluation.md readme to use the tool.
 
@@ -70,7 +52,7 @@ _The Community-Streamflow-Evaluation-System supports an interactive engagement w
 
 
 
-### Modeled Streamflow Evaluation by Hydrologic Unit Code (HUC)
+### HUCid Evaluation Methods
 The HUC_Eval class allows the user to evaluate modeled streamflow with observed in situ NWIS monitoring sites  for watershed(s) of interest. 
 The user can input multiple watersheds (e.g., Great Salt Lake: ['1601', '1602'])
 The user must enter a start date, end date, watersheds, and model to compare (NWM v2.1 is set up).
@@ -85,7 +67,7 @@ Color coding of the markers allows for quick identification of poor and well-per
 
 _Similar to the State_Eval class, the HUC_Eval class supports a more in-depth graphical analysis of the modeled vs. observed using the holoviews package_
 
-### Modeled Streamflow Evaluation - NHD - USGS Streamflow Evaluation
+### Reach Evaluation Methods
 
 The Reach_Eval class allows the user to evaluate modeled streamflow with selected NWIS monitoring sites of interest. 
 The user can input multiple USGS sites (e.g., ['02378780', '02339495', '02342500'])
@@ -102,3 +84,22 @@ The color code of the marker indicates the model performance at the respective U
 ![LULC_holoviews_Reach_Eval](https://user-images.githubusercontent.com/33735397/206267196-749bb94d-aa57-4d24-9b4e-97e7567e1fc0.PNG)
 
 _Similar to the State_Eval and HUC_Eval classes, the Reach_Eval class supports a more in-depth graphical analysis of the modeled vs. observed using the holoviews package_
+
+### Data Access
+Community-Streamflow-Evaluation-System leverages USGS/NWIS observations from 1980-2020 and colocated and while all data is publically available through the respective agencies, we found the download time to be preventative for a timely model evaluation. 
+The Alabama Water Institute at the University of Alabama hosts NWM v2.1 retrospective for all colocated USGS monitoring stations at a daily temporal resolution and provides the data free of charge via access to Amazon AWS S3 cloud storage.
+Community-Streamflow-Evaluation-System can quickly access observed and predicted data supporting a fast and repeatable tool for evaluating modeled streamflow performance.
+
+## Dependencies (versions, environments)
+Python: Version 3.9.12. 
+
+### Required packages
+The included requirements.txt file should set up the correct Community-Streamflow-Evaluation-System environment.
+To use Community-Streamflow-Evaluation-System, create a virtual Python environment and run the requirement.txt file to ensure all package versions are correct.
+To get started, click the [Here](./Getting%20Started.md)
+
+### Want to see your model in CSES?
+Please reach out the AWI team so we can put your model results in our AWS S3 database. We currently have a simple data model and are looking into more computationally effient methods to expedite interactivity and the overall hydrological evaluation experience.
+
+### Want to contribute?
+Reach out to the AWI team and we can identify meaningful areas to grow CSES. Community is in the name for a reason and we intende to integrate more hydrological modeling components into the tool kit as funding allows. Specific areas of contribution include snow, atmospheric forcings, and other model outputs. Let's advance the community modeling paradigm together!
