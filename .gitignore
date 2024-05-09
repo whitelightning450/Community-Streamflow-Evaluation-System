@@ -1,2 +1,3 @@
 *.csv
 WBD/*
+*.ipynb_checkpoints
